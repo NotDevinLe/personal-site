@@ -20,18 +20,13 @@ def ct_u32_unpack_u4(u32_packed: jax.Array) -> jax.Array:
 
 The first line of code says that the computer should treat the int32 model as int4 even though it's really not (and the computer can't actually support it.) Then what happens is that we now have an extra dimension. Why? Because lets say our matrix was something like (n, m), then after expanding it, it becomes (n, m, 8) due to each element being an array. What you do is grab the shape of the matrix except for the last 2 and squash them together by replacing it with -1 which similar to numpy puts all the remaining dimensions into 1. The second line turns it back into (n, m * 8) instead.
 
+Now you might be wondering, "isn't this really inefficient because we're constantly doing bitshifts under the hood?" Well, yes since the TPUs don't support int4, it will do bitshifts to extract each element, but the XLA is like this magic box that will make things a lot faster than if we bitshifted things ourselves.
+
 ## dense model implementations
 
-AI can generate test cases, identify edge cases, and even write test code automatically. This reduces the time spent on testing while improving coverage.
+Now we get into the implementation of how do we take a quantized model and dequantize it. We create a class called VllmCompressedTensorsWNA16 which inherits from vLLM's CompressedTensorsScheme class. This class will hold all quantization information such as the zero points, weights, scales, symmetry and other parameters. From this class, there are 6 primary functions.
 
-## mixture of expert model implementation
-
-AI tools can review code for:
-
-- Security vulnerabilities
-- Performance issues
-- Best practices
-- Style consistency
+Firstly, we have `create_weights(layer, output_partition_sizes, input_partition_sizes, output_size, input_size, params_dtype, weight_loader)`.
 
 ## tradeoffs i had to make
 
