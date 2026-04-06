@@ -40,7 +40,27 @@ process_weights_after_loading(layer)
 
 This function is the one that actually loads everything in and makes things easier for us during the inference time. Firstly, it loads all the matrices that we initialized in the previous section to have their real values. 
 
-After loading, we have to process each weight matrix. Start by unpacking the matrix to be instead of int4 to be int8. The most important thing is that we have to note that columns are out of order in terms of groups. We want all columns to be adjacent to their group members. Therefore, we permute the columns based on actorder. Afterwards, we unpack all other matrices that also need to be unpacked and return this int8 matrix. Notice that we now have an int8 matrix in memory and not an int4. 
+After loading, we have to process each weight matrix. Start by unpacking the matrix to be instead of int4 to be int8. The most important thing is that we have to note that columns are out of order in terms of groups. We want all columns to be adjacent to their group members. Therefore, we permute the columns based on actorder. Afterwards, we unpack all other matrices that also need to be unpacked and return this int8 matrix. Notice that we now have an int8 matrix in memory and not an int4. Now, you might be wondering why the heck would we quantize to int4 if we're just gonna dequantize to int8 and have it persist as our model during inference? This is because without doing this, we have no native optimized tpu operations for int4 and significant speed is lost. We also still do gain disk memory improvements, just not while we're serving the model. Finally, save the sorted indices for the columns after we permute them since instead of permuting the weight matrices, we now instead permute the inputs which is much cheaper.
+
+```bash
+_dequantize_to_bf16(weight_unpacked, weight_scale, zero_point_unpacked)
+```
+
+```bash
+apply_weights(layer, input)
+```
+
+This code is just a router based on whether you fused your Q, K, and V matrices together. If it does, we call `_apply_fused`, otherwise we call `_apply_split`.
+
+```bash
+_apply_fused(layer, input, bias)
+```
+
+```bash
+_apply_split(layer, input, bias)
+```
+
+This concludes our implementation of the dense model int4 quantization code!!!
 
 ## mixture of experts model implementation
 
