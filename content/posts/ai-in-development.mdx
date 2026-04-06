@@ -54,8 +54,8 @@ _apply_split(layer, input, bias)
 ```
 
 Although they're a bit different, a high level intuition for what they do is the following:
--Permute the input vector. 
--We then do standard dequantization on our persisting weight matrices.
+- Permute the input vector. 
+- We then do standard dequantization on our persisting weight matrices.
 
 Some notes about this is that although this seems to be just storing int8 in memory and then bloating up each layer during inference to be bfloat16, XLA will detect our operations and make it so that we only expand parts of the matrix up at a time and make it highly ooptimized for speed and memory. This means we aren't ever actually loading in a full bfloat16 matrix.
 
