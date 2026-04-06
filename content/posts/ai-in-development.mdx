@@ -24,7 +24,7 @@ Now you might be wondering, "isn't this really inefficient because we're constan
 
 ## dense model implementation
 
-Now we get into the implementation of how do we take a quantized model and dequantize it. We create a class called VllmCompressedTensorsWNA16 which inherits from vLLM's CompressedTensorsScheme class. This class will hold all quantization information such as the zero points, weights, scales, symmetry and other parameters. From this class, there are 6 primary functions.
+Now we get into the implementation of how do we take a quantized model and dequantize it. We create a class called VllmCompressedTensorsWNA16 which inherits from vLLM's CompressedTensorsScheme class. This class will hold all quantization information such as the zero points, weights, scales, symmetry and other parameters. From this class, there are 5 primary functions.
 
 ```bash
 create_weights(layer, output_partition_sizes, input_size_per_partition, output_size, input_size, params_dtype, weight_loader)
@@ -43,10 +43,6 @@ This function is the one that actually loads everything in and makes things easi
 After loading, we have to process each weight matrix. Start by unpacking the matrix to be instead of int4 to be int8. The most important thing is that we have to note that columns are out of order in terms of groups. We want all columns to be adjacent to their group members. Therefore, we permute the columns based on actorder. Afterwards, we unpack all other matrices that also need to be unpacked and return this int8 matrix. Notice that we now have an int8 matrix in memory and not an int4. Now, you might be wondering why the heck would we quantize to int4 if we're just gonna dequantize to int8 and have it persist as our model during inference? This is because without doing this, we have no native optimized tpu operations for int4 and significant speed is lost. We also still do gain disk memory improvements, just not while we're serving the model. Finally, save the sorted indices for the columns after we permute them since instead of permuting the weight matrices, we now instead permute the inputs which is much cheaper.
 
 ```bash
-_dequantize_to_bf16(weight_unpacked, weight_scale, zero_point_unpacked)
-```
-
-```bash
 apply_weights(layer, input)
 ```
 
@@ -54,13 +50,16 @@ This code is just a router based on whether you fused your Q, K, and V matrices 
 
 ```bash
 _apply_fused(layer, input, bias)
-```
-
-```bash
 _apply_split(layer, input, bias)
 ```
 
-This concludes our implementation of the dense model int4 quantization code!!!
+Although they're a bit different, a high level intuition for what they do is the following:
+-Permute the input vector. 
+-We then do standard dequantization on our persisting weight matrices.
+
+Some notes about this is that although this seems to be just storing int8 in memory and then bloating up each layer during inference to be bfloat16, XLA will detect our operations and make it so that we only expand parts of the matrix up at a time and make it highly ooptimized for speed and memory. This means we aren't ever actually loading in a full bfloat16 matrix.
+
+this concludes our implementation of the dense model int4 quantization code
 
 ## mixture of experts model implementation
 
