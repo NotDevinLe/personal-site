@@ -22,11 +22,13 @@ The first line of code says that the computer should treat the int32 model as in
 
 Now you might be wondering, "isn't this really inefficient because we're constantly doing bitshifts under the hood?" Well, yes since the TPUs don't support int4, it will do bitshifts to extract each element, but the XLA is like this magic box that will make things a lot faster than if we bitshifted things ourselves.
 
-## dense model implementations
+## dense model implementation
 
 Now we get into the implementation of how do we take a quantized model and dequantize it. We create a class called VllmCompressedTensorsWNA16 which inherits from vLLM's CompressedTensorsScheme class. This class will hold all quantization information such as the zero points, weights, scales, symmetry and other parameters. From this class, there are 6 primary functions.
 
-Firstly, we have `create_weights(layer, output_partition_sizes, input_partition_sizes, output_size, input_size, params_dtype, weight_loader)`.
+Firstly, we have `create_weights(layer, output_partition_sizes, input_size_per_partition, output_size, input_size, params_dtype, weight_loader)`. vLLM will call this to instantiate empty layers. Note that this logic is called after the code splits a layer across gpus (if applicable) and the following parameters are per-gpu. `Layer` is litterally the layer we want to modify and add stuff to. `output_partition_sizes` is a list of integers such that [q, k, v] denote the output sizes of each respective matrix. `input_size_per_partition` is the number of input features this gpu is holding. The rest are quite trivial.
+
+
 
 ## tradeoffs i had to make
 
