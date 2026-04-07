@@ -61,6 +61,16 @@ Some notes about this is that although this seems to be just storing int8 in mem
 
 this concludes our implementation of the dense model int4 quantization code
 
+## testing
+
+for testing, I run benchmarks a single benchmark on the Multilingual Grade School Math benchmark. We're given a question like:
+
+```bash
+Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?
+```
+
+Where the model will output a numeric value and we measure the accuracy.
+
 ## fin
 
 This was one of my hardest projects since correctness and optimality were critical. If we sacraficed speed or memory, then it defeats the purpose of pursuing this project in the first place. Overall, I learned a lot from this project, specifically about general quantization, TPU hardware, and jax/xla.

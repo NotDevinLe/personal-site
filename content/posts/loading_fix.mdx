@@ -1,0 +1,15 @@
+---
+title: "model loading OOM bug fix"
+excerpt: "bug hunting at 3am"
+date: "2026-04-08"
+author: "Le"
+readTime: "20 min read"
+---
+
+Right now, when I'm trying to load in kimi k2.5, it's always hitting out of memory errors. Even with a v6e-64 tpu pod, which has 64 * 32gb = 2048gb of HBM ram, it should never OOM because it can almost hold even the model with bfloat16.
+
+When I'm loading it in my tpu pod, i'm seeing that the worker0 is always crashing and it is holding hundreds of gb so this makes me think that all of the weights are passing through this single worker instead of properly sharding, causing the model loading to fail, not that the tpu pod can't store the model in HBM.
+
+## VllmModelWrapper
+
+This class wraps a pytorch model and lets you run jax code with it so it can run on tpus. 
