@@ -32,7 +32,7 @@ That is to simply not overwhelm the servers by sending things one by one. What r
 
 `AllBlocksCleared` which resets the entire kv cache.
 
-## architecture
+## information flow
 
 lets start with how vllm interacts with our redis database.
 
@@ -47,3 +47,14 @@ vLLM Worker (ROUTER :5558) <--> rproxy (DEALER) ----> Redis Index
 this is the absolute barebones of what's happening which is quite simple. the worker will publish everything on the `port 5557` and there is a `publisher-subscriber` relation between the two of them. 
 
 each request comes with an incementing id tag that helps us know what the last successful request we got from the publisher was. If we see that there is a gap (ie. last id we had was 100 but we just received 105) then we need a way to get this data back reliably. This is why we add a dealer such that we introduce a `router-dealer` relationship. This is guaranteed to be correct but is much slower and is called whenever a subscriber sees its missing information.
+
+## redis structure
+
+```
+
+block:{rproxy_block_hash}        Which workers has this 16-token block hashed
+engine:{worker_id}               The last sequence that this worker has updating their information (recall the router-dealer logic earlier)
+block_access:{hash}              LRU ordering for when KV redis hits memory limit and needs to evict
+tokenize:{prompt_hash}           The tokens corresponding to such hash. If we have a cache miss then we'll have to hash the entire prompt and set it as a kv pair.
+
+```
