@@ -1,0 +1,21 @@
+---
+title: "kv-cache aware load balancing"
+excerpt: "how to most efficiently load balance across many tpus for llms"
+date: "2026-21-06"
+author: "Le"
+readTime: "20 min read"
+---
+
+previously, for my system I was hashing an entire prompt and checking for it across all my tpus. However, this is not necessarily a good idea because:
+    - this doesn't take into account if certain kv pairs got evicted from a worker's memory
+    - we want to look at smaller prefixes
+
+the solution is to use a useful feature of vLLM's engine `kv_events` which is a parameter you can enable to instantiate a zmq publisher in which you can now spin up your own zmq subscriber and keep track of what is truly in a worker's kv cache.
+
+## architecture
+
+```bash
+vllm worker -> zmq publish (event)
+event -> rproxy subscriber
+subscriber -> kv-index redis server
+```
