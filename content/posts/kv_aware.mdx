@@ -62,10 +62,12 @@ each request comes with an incementing id tag that helps us know what the last s
 
 ```
 
-block:{rproxy_block_hash}        Which workers has this 16-token block hashed
-engine:{worker_id}               The last sequence that this worker has updating their information (recall the router-dealer logic earlier)
-block_access:{hash}              LRU ordering for when KV redis hits memory limit and needs to evict
-tokenize:{prompt_hash}           The tokens corresponding to such hash. If we have a cache miss then we'll have to hash the entire prompt and set it as a kv pair.
+block:<model>:<rproxy_hash> — SET of worker IPs. Routing table.
+engine:<model>:<worker>:<engine_hash> — STRING holding rproxy_hash. E→R reverse index.
+block_access:<model> — ZSET for LRU eviction.
+seq:<worker> — STRING u64. Replay cursor for the router-dealer reconnect logic.
+dedup:<worker>:<engine_hash>:<evt> — SETNX with 60s TTL. Dedupe when TP>1 (not load-bearing for you since TP=1 per engine).
+
 
 ```
 
