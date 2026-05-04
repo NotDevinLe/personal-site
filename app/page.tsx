@@ -1,6 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/posts'
+
+const basePath = '/Le-s-Lab'
 
 const projects = [
   {
@@ -40,13 +41,10 @@ export default function Home() {
         <div className="grid md:grid-cols-[260px_1fr] gap-10 md:gap-14">
           <aside>
             <div className="aspect-square rounded-lg mb-5 overflow-hidden bg-gray-100">
-              <Image
-                src="/profile.jpg"
+              <img
+                src={`${basePath}/profile.jpg`}
                 alt="devin le"
-                width={520}
-                height={520}
                 className="w-full h-full object-cover"
-                priority
               />
             </div>
             <h1 className="font-serif text-2xl font-bold text-center">
