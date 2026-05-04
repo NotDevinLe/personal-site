@@ -6,8 +6,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const newsreader = Newsreader({ subsets: ['latin'], variable: '--font-serif' })
 
 export const metadata: Metadata = {
-  title: "Le's Lab",
-  description: "a running list of my thoughts",
+  title: 'Devin Le',
+  description: 'personal site, projects, and writing by devin le',
 }
 
 export default function RootLayout({

@@ -14,15 +14,22 @@ export default function About() {
 
         <div className="article-content">
           <p>
-            welcome to le&apos;s lab — a space where i document my work and thinking
-            across competitive programming, systems engineering, and ai research.
+            hi, i&apos;m devin — this site is part personal homepage, part lab journal.
+            i document my work and thinking across competitive programming, systems
+            engineering, and ai research.
           </p>
 
           <p>
-            this blog is where i break down problems i care about, from optimizing
-            algorithms and debugging low-level systems to building research-grade
-            machine learning pipelines and full-stack projects. it&apos;s part notebook,
-            part lab journal, and part knowledge base.
+            the writing here is where i break down problems i care about, from
+            optimizing algorithms and debugging low-level systems to building
+            research-grade machine learning pipelines and full-stack projects.
+            it&apos;s part notebook, part lab journal, and part knowledge base.
+          </p>
+
+          <h2>background</h2>
+          <p>
+            short background placeholder — add a paragraph about your education,
+            current role, and what you&apos;re focused on right now.
           </p>
 
           <h2>what you&apos;ll find</h2>
@@ -35,9 +42,15 @@ export default function About() {
           </ul>
 
           <p>
-            whether you&apos;re here for algorithms, systems, or applied ai, this blog is
-            meant to be a transparent look into how complex software is built and
+            whether you&apos;re here for algorithms, systems, or applied ai, this site
+            is meant to be a transparent look into how complex software is built and
             understood from the ground up.
+          </p>
+
+          <h2>contact</h2>
+          <p>
+            best places to reach me are listed on the{' '}
+            <Link href="/">home page</Link>.
           </p>
         </div>
       </div>
