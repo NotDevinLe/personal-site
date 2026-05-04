@@ -5,23 +5,17 @@ const basePath = '/personal-site'
 
 const projects = [
   {
-    name: 'project one',
+    name: 'Gameboy Emulator',
     tag: '2025',
-    description: 'short description of what it is and why it matters.',
-    href: '#',
+    description: 'Debugging hell.',
+    href: 'https://github.com/NotDevinLe/gameboy_emulator',
   },
   {
-    name: 'project two',
+    name: 'ThinkEval',
     tag: '2024',
-    description: 'short description of what it is and why it matters.',
-    href: '#',
-  },
-  {
-    name: 'project three',
-    tag: '2024',
-    description: 'short description of what it is and why it matters.',
-    href: '#',
-  },
+    description: 'Benchmarking LLMs reasoning capabilities through puzzles.',
+    href: 'https://github.com/NotDevinLe/ThinkEval',
+  }
 ]
 
 const socials = [
