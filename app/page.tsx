@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/posts'
 
-const basePath = '/Le-s-Lab'
+const basePath = '/personal-site'
 
 const projects = [
   {

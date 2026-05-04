@@ -7,7 +7,7 @@ const nextConfig = {
   },
   // If your repository name is not the root (e.g., username.github.io/repo-name),
   // uncomment and set the basePath to your repository name:
-  basePath: '/Le-s-Lab',
+  basePath: '/personal-site',
   // If your repository IS at the root (username.github.io), comment out the basePath line above
 }
 
